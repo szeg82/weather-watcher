@@ -38,15 +38,23 @@ def read_history(city_id: int = None, limit: int = 20, db: Session = Depends(get
 
 
 @app.get("/weather/stats")
-def get_stats(db: Session = Depends(get_db)):
-    history = services.get_history(db, limit=100)
+def get_stats(city_id: int = None, db: Session = Depends(get_db)):
+    # Lekérdezés alapja
+    query = db.query(models.WeatherData)
+    
+    # Ha van megadva city_id, szűrünk rá
+    if city_id:
+        query = query.filter(models.WeatherData.city_id == city_id)
+    
+    history = query.all()
+    
     if not history:
-        return {"avg_temp": 0, "count": 0}
+        return {"avg_temp": 0, "count": 0, "max_temp": 0, "min_temp": 0}
 
     temps = [w.temperature for w in history]
-    avg_temp = sum(temps) / len(temps)
+    
     return {
-        "avg_temp": round(avg_temp, 2),
+        "avg_temp": round(sum(temps) / len(temps), 2),
         "count": len(history),
         "max_temp": max(temps),
         "min_temp": min(temps)

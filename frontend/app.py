@@ -85,9 +85,25 @@ if selected_city_id:
     except Exception as e:
         st.error(f"Nem sikerült a statisztikák lekérése: {e}")
 
+st.markdown("---")
+
 # 4. Előzmények és Vizualizáció a kiválasztott városhoz
 if selected_city_id:
-    st.header(f"📈 Mérési előzmények: {selected_city_name}")
+    header_col, btn_col = st.columns([3, 1])
+    with header_col:
+        st.header(f"📈 Mérési előzmények: {selected_city_name}")
+    with btn_col:
+        st.write("")  # Térköz az igazításhoz
+        if st.button(f"🔄 Adatok frissítése", use_container_width=True):
+            with st.spinner("Lekérés..."):
+                try:
+                    res = requests.post(f"{BACKEND_URL}/weather/update?city_name={selected_city_name}")
+                    if res.status_code == 200:
+                        st.rerun()
+                    else:
+                        st.error("Sikertelen frissítés.")
+                except Exception as e:
+                    st.error(f"Hiba: {e}")
     try:
         # Itt küldjük a city_id paramétert!
         history_res = requests.get(f"{BACKEND_URL}/weather/history?city_id={selected_city_id}&limit=50")

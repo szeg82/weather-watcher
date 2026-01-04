@@ -51,6 +51,7 @@ def get_stats(city_id: int = None, db: Session = Depends(get_db)):
     if not history:
         return {"avg_temp": 0, "count": 0, "max_temp": 0, "min_temp": 0}
 
+    #list comprehension
     temps = [w.temperature for w in history]
     
     return {

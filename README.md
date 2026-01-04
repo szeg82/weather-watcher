@@ -43,5 +43,10 @@ Ez a projekt egy modern webes alkalmazás, amely szétválasztott architektúrá
    ```
 
 ## Elérhetőség
+
+### Lokális környzetben
 - **Backend API:** [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 - **Frontend Dashboard:** [http://localhost:8501](http://localhost:8501)
+### Deploy/production
+- **Backend API (Render.com):** [https://weather-watcher-csau.onrender.com/docs](https://weather-watcher-csau.onrender.com/docs)
+- **Frontend Dashboard (Streamlit.app):** [https://weather-watcher-itryxep7rnfbt633qu45hb.streamlit.app](https://weather-watcher-itryxep7rnfbt633qu45hb.streamlit.app)

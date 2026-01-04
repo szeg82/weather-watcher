@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from datetime import datetime
 from typing import Optional
 
@@ -22,8 +22,7 @@ class CityCreate(CityBase):
 
 class CityResponse(CityBase):
     id: int
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class WeatherCreate(WeatherBase):
     city_id: int
@@ -32,6 +31,5 @@ class WeatherResponse(WeatherBase):
     id: int
     city_id: int
     timestamp: datetime
-    
-    class Config:
-        from_attributes = True
+
+    model_config = ConfigDict(from_attributes=True)

@@ -8,6 +8,10 @@ from sqlalchemy.orm import Session
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# Funkcionális szemlélet: tiszta függvény az átváltáshoz
+def celsius_to_fahrenheit(celsius: float) -> float:
+    return (celsius * 9/5) + 32
+
 # Funkcionális szemlélet: WMO kód fordítása szöveggé
 def translate_weather_code(code: int) -> str:
     mapping = {

@@ -1,8 +1,12 @@
 import asyncio
+import os
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from . import models, schemas, database, services
 from .database import engine, get_db
+from dotenv import load_dotenv
+
+load_dotenv() # .env fájl betöltése
 
 # Adatbázis táblák létrehozása
 models.Base.metadata.create_all(bind=engine)
@@ -70,7 +74,7 @@ def add_city(city: schemas.CityCreate, db: Session = Depends(get_db)):
 def list_cities(db: Session = Depends(get_db)):
     return services.get_cities(db)
 
-# Frissített háttérfolyamat hibajavítással
+
 @app.on_event("startup")
 async def schedule_weather_updates():
     async def run_updates():
@@ -111,7 +115,9 @@ async def schedule_weather_updates():
                 print(f"Hiba a háttérfolyamatban: {e}")
             finally:
                 db.close()
-            # 10 perc várakozás a következő frissítésig
-            await asyncio.sleep(600)
+            # várakozás a következő frissítésig (default 30 perc), .env-ben állítható
+            data_refetch_minutes = os.getenv("WEATHER_DATA_FETCH_MINUTES", 30)
+
+            await asyncio.sleep(data_refetch_minutes * 60)
 
     asyncio.create_task(run_updates())

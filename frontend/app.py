@@ -94,7 +94,7 @@ if selected_city_id:
         st.header(f"📈 Mérési előzmények: {selected_city_name}")
     with btn_col:
         st.write("")  # Térköz az igazításhoz
-        if st.button(f"🔄 Adatok frissítése", use_container_width=True):
+        if st.button("🔄 Adatok frissítése", use_container_width=True):
             with st.spinner("Lekérés..."):
                 try:
                     res = requests.post(f"{BACKEND_URL}/weather/update?city_name={selected_city_name}")
@@ -104,9 +104,12 @@ if selected_city_id:
                         st.error("Sikertelen frissítés.")
                 except Exception as e:
                     st.error(f"Hiba: {e}")
+    # Limit kiválasztása
+    limit_options = [10, 25, 50, 100]
+    selected_limit = st.selectbox("Megjelenített rekordok száma:", limit_options, index=2)
+
     try:
-        # Itt küldjük a city_id paramétert!
-        history_res = requests.get(f"{BACKEND_URL}/weather/history?city_id={selected_city_id}&limit=50")
+        history_res = requests.get(f"{BACKEND_URL}/weather/history?city_id={selected_city_id}&limit={selected_limit}")
         if history_res.status_code == 200:
             data = history_res.json()
             if data:

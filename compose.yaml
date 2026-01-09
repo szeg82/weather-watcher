@@ -1,0 +1,26 @@
+services:
+  app-backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./sqlite:/app/sqlite # sqlite adatbázis perzisztencia
+    environment:
+      - DATABASE_URL=sqlite:///./sqlite/weather.db
+    env_file:
+      - .env
+
+  app-frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    ports:
+      - "8501:8501"
+    environment:
+      - BACKEND_URL=http://app-backend:8000
+    env_file:
+      - .env
+    depends_on:
+      - app-backend

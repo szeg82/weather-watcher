@@ -50,3 +50,17 @@ Ez a projekt egy modern webes alkalmazás, amely szétválasztott architektúrá
 ### Deploy/production
 - **Backend API (Render.com):** [https://weather-watcher-csau.onrender.com/docs](https://weather-watcher-csau.onrender.com/docs)
 - **Frontend Dashboard (Streamlit.app):** [https://weather-watcher-itryxep7rnfbt633qu45hb.streamlit.app](https://weather-watcher-itryxep7rnfbt633qu45hb.streamlit.app)
+
+## Futtatás Dockerrel
+    
+A projekt tartalmaz Docker konfigurációt, így a backend és a frontend külön konténerekben, elszigetelten is futtatható:
+
+1. **Indítás Docker Compose-al:**
+   ```bash
+   docker compose up --build
+   ```
+
+3. **Leállítás:**
+   ```bash
+   docker compose down
+   ```

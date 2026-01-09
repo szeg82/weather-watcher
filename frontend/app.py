@@ -9,6 +9,7 @@ load_dotenv()
 BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
 
 def translate_weather_code(code: int) -> str:
+    """Időjárás kódok magyar nyelvű leírását adja vissza a UI számára."""
     mapping = {
         0: "☀️ Derült, napos",
         1: "🌤️ Kevés felhő",

@@ -10,11 +10,6 @@ Ez a projekt egy modern webes alkalmazás, amely szétválasztott architektúrá
 - **Megjelenítés:** Interaktív Dashboard (Streamlit).
 - **Automatizálás:** Háttérfolyamat az adatfrissítéshez.
 
-## Programozási paradigmák megjelenése
-- **Objektumorientált (OOP):** SQLAlchemy modellek (`City`, `WeatherData`) és Pydantic sémák használata.
-- **Funkcionális:** Tiszta függvények a `services.py`-ban (pl. hőmérséklet konverzió, WMO kód fordítás), list comprehension-ök a statisztikai modulban.
-- **Procedurális:** A rendszer indítása, a háttérfolyamat vezérlési szerkezete és a `main.py` indító script.
-
 ## Telepítés és futtatás
 
 1. **Virtuális környezet létrehozása és aktiválása:**
@@ -64,3 +59,14 @@ A projekt tartalmaz Docker konfigurációt, így a backend és a frontend külö
    ```bash
    docker compose down
    ```
+   
+## Arhitektúra
+```mermaid
+graph TD
+    A[Streamlit Frontend - Cloud] -->|HTTP Requests| B[FastAPI Backend - Render]
+    B -->|SQLAlchemy ORM| C[(SQLite Database)]
+    D[Background Worker - Asyncio] -->|Fetch Data| E[OpenWeather API]
+    E -->|JSON Data| D
+    D -->|Store| C
+    B -->|Query Data| C
+```

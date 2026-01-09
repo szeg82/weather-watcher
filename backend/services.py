@@ -8,12 +8,12 @@ from sqlalchemy.orm import Session
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Funkcionális szemlélet: tiszta függvény az átváltáshoz
 def celsius_to_fahrenheit(celsius: float) -> float:
+    """Kiszámítja a Fahrenheit értéket Celsiusból."""
     return (celsius * 9/5) + 32
 
-# Funkcionális szemlélet: WMO kód fordítása szöveggé
 def translate_weather_code(code: int) -> str:
+    """A WMO (World Meteorological Organization) időjárás kódokat fordítja le magyar szövegre és emoji-ra."""
     mapping = {
         0: "☀️ Derült, napos",
         1: "🌤️ Kevés felhő",
@@ -29,6 +29,7 @@ def translate_weather_code(code: int) -> str:
     return mapping.get(code, f"Ismeretlen ({code})")
 
 async def fetch_weather_data(city: models.City) -> Dict:
+    """Aszinkron módon lekéri az aktuális időjárási adatokat az Open-Meteo API-tól egy adott város koordinátái alapján."""
     url = (
         f"https://api.open-meteo.com/v1/forecast?"
         f"latitude={city.latitude}&longitude={city.longitude}&"
@@ -56,9 +57,11 @@ async def fetch_weather_data(city: models.City) -> Dict:
             return None
 
 def get_cities(db: Session):
+    """Lekéri az összes mentett várost az adatbázisból."""
     return db.query(models.City).all()
 
 def create_city(db: Session, city: schemas.CityCreate):
+    """Új várost hoz létre az adatbázisban."""
     db_city = models.City(**city.dict())
     db.add(db_city)
     db.commit()
@@ -67,6 +70,7 @@ def create_city(db: Session, city: schemas.CityCreate):
 
 # DB logika
 def save_weather(db: Session, weather_data: schemas.WeatherCreate):
+    """Elment egy időjárási mérési rekordot az adatbázisba."""
     db_weather = models.WeatherData(**weather_data.dict())
     db.add(db_weather)
     db.commit()
@@ -74,4 +78,5 @@ def save_weather(db: Session, weather_data: schemas.WeatherCreate):
     return db_weather
 
 def get_history(db: Session, limit: int = 20):
+    """Lekéri a legfrissebb időjárási előzményeket az adatbázisból."""
     return db.query(models.WeatherData).order_by(models.WeatherData.timestamp.desc()).limit(limit).all()

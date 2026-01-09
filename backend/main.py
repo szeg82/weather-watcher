@@ -1,5 +1,6 @@
 import asyncio
 import os
+import logging
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from . import models, schemas, database, services
@@ -7,6 +8,9 @@ from .database import engine, get_db
 from dotenv import load_dotenv
 
 load_dotenv() # .env fájl betöltése
+# Logolás beállítása
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Adatbázis táblák létrehozása
 models.Base.metadata.create_all(bind=engine)
@@ -16,11 +20,13 @@ app = FastAPI(title="Időjárás Figyelő API")
 
 @app.get("/")
 def read_root():
+    """Egyszerű health-check végpont az API állapotának ellenőrzéséhez."""
     return {"message": "Weather API is running"}
 
 
 @app.post("/weather/update", response_model=schemas.WeatherResponse)
 async def update_weather(city_name: str = "Budapest", db: Session = Depends(get_db)):
+    """Manuális frissítést indít egy adott városra: lekéri az API-tól és elmenti az adatbázisba."""
     # Megkeressük a várost az adatbázisban
     db_city = db.query(models.City).filter(models.City.city_name == city_name).first()
     if not db_city:
@@ -35,6 +41,7 @@ async def update_weather(city_name: str = "Budapest", db: Session = Depends(get_
 
 @app.get("/weather/history", response_model=list[schemas.WeatherResponse])
 def read_history(city_id: int = None, limit: int = 20, db: Session = Depends(get_db)):
+    """Visszaadja az időjárási mérési előzményeket, opcionálisan városra szűrve."""
     query = db.query(models.WeatherData)
     if city_id:
         query = query.filter(models.WeatherData.city_id == city_id)
@@ -43,6 +50,7 @@ def read_history(city_id: int = None, limit: int = 20, db: Session = Depends(get
 
 @app.get("/weather/stats")
 def get_stats(city_id: int = None, db: Session = Depends(get_db)):
+    """Statisztikai számításokat (átlag, max, min hőmérséklet) végez a mért adatokon."""
     # Lekérdezés alapja
     query = db.query(models.WeatherData)
     
@@ -110,9 +118,9 @@ async def schedule_weather_updates():
                     data = await services.fetch_weather_data(city)
                     if data:
                         services.save_weather(db, schemas.WeatherCreate(**data))
-                print(f"Sikeres frissítés: {len(cities)} város.")
+                logger.info(f"Sikeres frissítés: {len(cities)} város.")
             except Exception as e:
-                print(f"Hiba a háttérfolyamatban: {e}")
+                logger.error(f"Hiba a háttérfolyamatban: {e}")
             finally:
                 db.close()
             # várakozás a következő frissítésig (default 30 perc), .env-ben állítható

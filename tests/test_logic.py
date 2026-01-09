@@ -1,5 +1,5 @@
 import pytest
-from backend.services import celsius_to_fahrenheit, translate_weather_code
+from backend.services import celsius_to_fahrenheit, translate_weather_code, fetch_weather_data
 from backend.schemas import CityCreate, WeatherCreate
 
 # Ez a teszt a Celsius-Fahrenheit átváltót ellenőrzi több különböző bemeneti értékre (fagypont, szobahőmérséklet, negatív érték).
